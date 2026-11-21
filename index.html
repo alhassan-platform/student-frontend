@@ -85,10 +85,11 @@ nav a.on{background:#fff;color:var(--indigo);font-weight:700}
     $('#nav').innerHTML = items.map(([h, t, k]) => `<a href="${h}" class="${k === r ? 'on' : ''}">${t}</a>`).join('');
   }
   const errBox = (e) => `<div class="err" role="alert">${esc(e.message || 'حصل خطأ')}</div>`;
-  async function guard(fn) { try { return await fn(); } catch (e) { if (e.status === 401 && state.token) { state.token = state.user = null; persist(); } view.innerHTML = errBox(e) + `<p><a class="btn" href="#/login">تسجيل الدخول</a></p>`; return null; } }
+  async function guard(fn, isCurrent) { try { return await fn(); } catch (e) { if (!isCurrent()) return null; if (e.status === 401 && state.token) { state.token = state.user = null; persist(); } view.innerHTML = errBox(e) + `<p><a class="btn" href="#/login">تسجيل الدخول</a></p>`; return null; } }
 
   const routes = {
-    '': async () => {
+    '': async (id, ctx) => {
+      const api = ctx.api, isCurrent = ctx.isCurrent;
       const c = await api.catalog();
       view.innerHTML = `<div class="hero"><span class="tag t">تانية ثانوي · الترم الأول متاح دلوقتي</span><h1>تعلّم البرمجة والذكاء الاصطناعي<br>وابنِ مشروعك بنفسك</h1><p>اختار سنتك، ابدأ الدرس، سلّم الواجب، وشوف درجتك وتقدمك من مكان واحد.</p><a class="btn" href="#/courses">ابدأ الآن</a></div>
       <div class="stats stats3"><div class="stat"><b>تانية ثانوي · الترم الأول</b>المتاح دلوقتي</div><div class="stat"><b>قريبًا</b>الترم التاني وأولى ثانوي</div><div class="stat"><b>حسب الدرس</b>واجب أسئلة MCQ أو رفع ملف</div></div>
@@ -98,14 +99,21 @@ nav a.on{background:#fff;color:var(--indigo);font-weight:700}
       <h2>مدرّسك</h2><div class="card"><b>م. الحسن شريف</b><p class="mut">مدرّس برمجة وذكاء اصطناعي. شرح بأمثلة من الواقع ومشاريع في كل وحدة.${D.n1 || ''}</p></div>
       <h2>التواصل</h2><div class="card"><p class="mut" style="margin-top:0">للاستفسار أو تفعيل الاشتراك تواصل مع المعلم على واتساب.${D.n2 || ''}</p></div>`;
     },
-    login: async () => {
+    login: async (id, ctx) => {
+      const api = ctx.api, isCurrent = ctx.isCurrent;
       view.innerHTML = `<div class="card" style="max-width:460px;margin:auto"><h2 style="margin-top:0">تسجيل الدخول</h2>
       <form id="f"><label for="c">كود الدخول</label><input id="c" type="password" autocomplete="off" required><p><button class="btn" style="background:var(--purple);color:#fff">دخول</button></p></form>
       ${D.n3 || ''}<div id="m"></div></div>`;
-      $('#f').onsubmit = async (e) => { e.preventDefault(); const lb = $('#f').querySelector('button'); lb.disabled = true; lb.textContent = 'جارٍ الدخول...'; try { const r = await api.login($('#c').value.trim(), randHex(32)); state.token = r.token; state.user = r.user; persist(); location.hash = r.user.role === 'teacher' ? '#/admin' : '#/courses'; } catch (x) { $('#m').innerHTML = errBox(x); lb.disabled = false; lb.textContent = 'دخول'; } };
+      $('#f').onsubmit = async (e) => { e.preventDefault(); const lb = $('#f').querySelector('button'); lb.disabled = true; lb.textContent = 'جارٍ الدخول...'; try { const r = await api.login($('#c').value.trim(), randHex(32)); state.token = r.token; state.user = r.user; persist(); location.hash = r.user.role === 'teacher' ? '#/admin' : '#/courses'; } catch (x) { if (!isCurrent()) return; $('#m').innerHTML = errBox(x); lb.disabled = false; lb.textContent = 'دخول'; } };
     },
-    logout: async () => { try { if (state.token) await api.logout(state.token); } catch (e) { /* token may already be invalid */ } state.token = state.user = null; persist(); location.hash = '#/'; },
-    courses: async () => {
+    logout: async (id, ctx) => {
+      const api = ctx.api, isCurrent = ctx.isCurrent, token = state.token;
+      state.token = state.user = null; persist(); nav();
+      try { if (token) await api.logout(token); } catch (e) { if (!isCurrent()) return; /* local logout still applies */ }
+      if (isCurrent()) location.hash = '#/';
+    },
+    courses: async (id, ctx) => {
+      const api = ctx.api, isCurrent = ctx.isCurrent;
       if (!state.user) { view.innerHTML = `<div class="card"><h2 style="margin-top:0">سجّل دخولك الأول</h2><a class="btn" style="background:var(--purple);color:#fff" href="#/login">دخول</a></div>`; return; }
       const cur = await api.myCurriculum(state.token);
       view.innerHTML = `<h2 style="margin-top:0">الدروس</h2>` + cur.terms.map((t) => {
@@ -113,8 +121,9 @@ nav a.on{background:#fff;color:var(--indigo);font-weight:700}
         return `<h3>${esc(t.title)}</h3>` + t.units.map((u) => `<h4>${esc(u.title)}</h4><div class="card">${u.lessons.map((l) => `<a class="lesson" href="#/lesson/${l.id}" style="text-decoration:none;color:inherit"><div class="dot ${l.locked ? 'lock' : ''}">${l.locked ? '–' : '▶'}</div><div><b>${esc(l.title)}</b><div class="mut">${l.locked ? 'مقفول' : l.needsSubscription ? 'محتاج اشتراك' : l.hasVideo ? 'الشرح متاح' : 'المحتوى هيترفع قريبًا'}</div></div></a>`).join('')}</div>`).join('');
       }).join('');
     },
-    lesson: async (id) => {
-      if (!state.user) return routes.courses();
+    lesson: async (id, ctx) => {
+      const api = ctx.api, isCurrent = ctx.isCurrent;
+      if (!state.user) return routes.courses(undefined, ctx);
       const l = await api.lesson(state.token, id);
       let body;
       if (l.locked) body = '<div class="card"><b>الدرس مقفول</b><p class="mut">هيتفتح لما المعلم يفتحه.</p></div>';
@@ -123,9 +132,10 @@ nav a.on{background:#fff;color:var(--indigo);font-weight:700}
       else body = playerHtml(l.videoUrl);
       view.innerHTML = `<p><a href="#/courses">← كل الدروس</a></p><h2 style="margin-top:0">${esc(l.title)}</h2>${body}${l.hwOpen && !l.locked && !l.needsSubscription ? `<p><a class="btn" style="background:var(--purple);color:#fff" href="#/hw/${l.id}">ابدأ الواجب</a></p>` : '<p class="mut">الواجب مقفول حاليًا.</p>'}`;
     },
-    hw: async (id) => {
-      if (!state.user) return routes.courses();
-      let m, st; try { st = await api.hwStatus(state.token, id); if (st.mcq !== false) m = await api.mcq(state.token, id); } catch (e) { view.innerHTML = errBox(e) + `<p><a href="#/courses">← الدروس</a></p>`; return; }
+    hw: async (id, ctx) => {
+      const api = ctx.api, isCurrent = ctx.isCurrent;
+      if (!state.user) return routes.courses(undefined, ctx);
+      let m, st; try { st = await api.hwStatus(state.token, id); if (st.mcq !== false) m = await api.mcq(state.token, id); } catch (e) { if (!isCurrent()) return; view.innerHTML = errBox(e) + `<p><a href="#/courses">← الدروس</a></p>`; return; }
       const okFile = (f) => /\.(pdf|png|jpe?g)$/i.test(f.name) && f.size > 0 && f.size <= 5 * 1024 * 1024;
       const fileHint = 'PDF أو صورة PNG/JPG، حتى ٥ ميجا.';
       // Upload-only form: used after grading (retry a failed file without grading twice).
@@ -138,7 +148,7 @@ nav a.on{background:#fff;color:var(--indigo);font-weight:700}
           if (!f) return; if (!okFile(f)) { $('#m').insertAdjacentHTML('beforeend', errBox({ message: 'الملف لازم يكون PDF أو PNG/JPG وأقل من ٥ ميجا' })); return; }
           const b = $('#uf').querySelector('button'); b.disabled = true; b.textContent = 'جارٍ الرفع...'; $('#m').insertAdjacentHTML('beforeend', '<p class="mut" id="busy">جارٍ رفع الملف، استنى لحظات...</p>');
           try { await api.uploadHomework(state.token, id, f.name, await toBase64(f)); uploadForm(await api.hwStatus(state.token, id), '<div class="ok">تم رفع الملف.</div>'); }
-          catch (u) { b.disabled = false; b.textContent = 'رفع الملف'; const bz = $('#busy'); if (bz) bz.remove(); $('#m').insertAdjacentHTML('beforeend', errBox({ message: 'الملف ماترفعش: ' + (u.message || '') })); }
+          catch (u) { if (!isCurrent()) return; b.disabled = false; b.textContent = 'رفع الملف'; const bz = $('#busy'); if (bz) bz.remove(); $('#m').insertAdjacentHTML('beforeend', errBox({ message: 'الملف ماترفعش: ' + (u.message || '') })); }
         };
       };
       if (st.mcq === false) {
@@ -159,27 +169,29 @@ nav a.on{background:#fff;color:var(--indigo);font-weight:700}
         if (file && !okFile(file)) { $('#m').innerHTML = errBox({ message: 'الملف لازم يكون PDF أو PNG/JPG وأقل من ٥ ميجا. غيّر الملف وبعدين ابعت.' }); return; }
         const btn = $('#f').querySelector('button'); btn.disabled = true; btn.textContent = 'جارٍ الإرسال...';
         let r;
-        try { r = await api.submitMcq(state.token, id, a); } catch (x) { $('#m').innerHTML = errBox(x); btn.disabled = false; btn.textContent = 'إرسال الواجب'; return; }
+        try { r = await api.submitMcq(state.token, id, a); } catch (x) { if (!isCurrent()) return; $('#m').innerHTML = errBox(x); btn.disabled = false; btn.textContent = 'إرسال الواجب'; return; }
         $('#f').remove(); if (file) $('#m').innerHTML = '<div class="ok">الدرجات اتسجلت. جارٍ رفع الملف، استنى لحظات...</div>';
         const s0 = { score: r.score, total: r.total, uploads: 0, maxUploads: 3 };
         const review = () => !Array.isArray(r.correct) ? '' : '<h3>مراجعة الإجابات</h3>' + m.questions.map((q, i) => `<div class="card" style="margin-bottom:10px"><b>${i + 1}. ${esc(q.q)}</b>${q.options.map((o, j) => `<div class="mut" style="${j === r.correct[i] ? 'color:#0a7d6b;font-weight:700' : (j === a[i] ? 'color:#b3261e' : '')}">${j === r.correct[i] ? '✓ ' : (j === a[i] ? '✗ ' : '')}${esc(o)}</div>`).join('')}</div>`).join('');
         if (!file) { $('#m').innerHTML = `<div class="ok">تم التسليم. درجتك ${r.score} من ${r.total}</div>` + review(); return; }
         try { await api.uploadHomework(state.token, id, file.name, await toBase64(file)); uploadForm({ ...s0, uploads: 1 }, '<div class="ok">تم رفع الملف.</div>'); }
-        catch (u) { uploadForm(s0, errBox({ message: 'الدرجات اتسجلت، بس الملف ماترفعش: ' + (u.message || '') + '. تقدر تحاول ترفعه تاني من هنا، والدرجة مش هتتغير.' })); }
+        catch (u) { if (!isCurrent()) return; uploadForm(s0, errBox({ message: 'الدرجات اتسجلت، بس الملف ماترفعش: ' + (u.message || '') + '. تقدر تحاول ترفعه تاني من هنا، والدرجة مش هتتغير.' })); }
         $('#m').insertAdjacentHTML('beforeend', review());
       };
     },
-    me: async () => {
-      if (!state.user) return routes.courses();
+    me: async (id, ctx) => {
+      const api = ctx.api, isCurrent = ctx.isCurrent;
+      if (!state.user) return routes.courses(undefined, ctx);
       const [r, ls] = await Promise.all([api.myResults(state.token), api.lessons(state.token)]); const title = (id) => (ls.find((l) => l.id === id) || {}).title || id;
       view.innerHTML = `<h2 style="margin-top:0">نتايجي</h2><div class="card">${r.length ? r.map((x) => `<div class="lesson"><div class="dot done">✓</div><div><b>${esc(title(x.lessonId))}</b><div class="mut">${x.score} من ${x.total}</div></div></div>`).join('') : '<p class="mut">لسه ما سلّمتش أي واجب.</p>'}</div>`;
       try {
         const bs = await api.bookStatus(state.token);
         if (bs && bs.state === 'ok' && bs.summary) { const m = bs.summary; view.innerHTML += `<h3>الكتاب التفاعلي</h3><div class="card"><p style="margin-top:0">دروس خلصتها: <b>${m.lessonsDone}</b> من ${m.lessons} · أنشطة حلّيتها صح: <b>${m.labsDone}</b> من ${m.labs} · تجارب جرّبتها: <b>${m.labsOpened}</b> من ${m.labsOpenable} · اختبارات عملتها: <b>${m.quizzesTaken}</b> من ${m.lessons}${m.avgBestQuizPct === null ? '' : ' · متوسط أحسن نتيجة: <b>' + m.avgBestQuizPct + '%</b>'}</p><p class="mut">دي تمارين تدريب جوّه الكتاب، ومش بدل الواجب المتصحّح.</p><a class="btn" style="background:var(--purple);color:#fff" href="#/book">افتح الكتاب</a></div>`; }
-      } catch (e) { /* the book summary is optional; results above stay */ }
+      } catch (e) { if (!isCurrent()) return; /* the book summary is optional; results above stay */ }
     },
-    book: async () => {
-      if (!state.user) return routes.courses();
+    book: async (id, ctx) => {
+      const api = ctx.api, isCurrent = ctx.isCurrent;
+      if (!state.user) return routes.courses(undefined, ctx);
       const st = await api.bookStatus(state.token);
       const head = '<h2 style="margin-top:0">الكتاب التفاعلي</h2>';
       if (st.state !== 'ok') {
@@ -195,13 +207,15 @@ nav a.on{background:#fff;color:var(--indigo);font-weight:700}
       $('#bk-box').appendChild(f); $('#bk-note').textContent = 'تقدمك وأنشطتك بتتسجّل في حسابك تلقائيًا.';
       bookCur = { frame: f, pending: null, sig: null, timer: null };
     },
-    admin: async () => {
+    admin: async (id, ctx) => {
+      const api = ctx.api, isCurrent = ctx.isCurrent;
       // No client-side role gate: the API itself rejects non-teachers.
-      if (!state.token) return routes.courses();
+      if (!state.token) return routes.courses(undefined, ctx);
       const o = await api.adminOverview(state.token); const ls = await api.lessons(state.token);
       view.innerHTML = `<h2 style="margin-top:0">لوحة المعلم</h2><div class="stats"><div class="stat"><b>${o.students}</b>طلاب</div><div class="stat"><b>${o.submissions}</b>تسليمات</div><div class="stat"><b>${o.closedLessons}</b>دروس مقفولة</div><div class="stat"><b>${o.missingVideos.length}</b>دروس بلا فيديو</div></div>
       <div class="card tbl"><table><tr><th>الدرس</th><th>الدرس مفتوح</th><th>الواجب مفتوح</th></tr>${ls.map((l) => `<tr><td>${esc(l.title)}</td><td><button class="btn" data-k="lesson" data-id="${l.id}" data-v="${l.open ? 0 : 1}" style="background:${l.open ? 'var(--teal)' : '#ddd'}">${l.open ? 'مفتوح' : 'مقفول'}</button></td><td><button class="btn" data-k="hw" data-id="${l.id}" data-v="${l.hwOpen ? 0 : 1}" style="background:${l.hwOpen ? 'var(--teal)' : '#ddd'}">${l.hwOpen ? 'مفتوح' : 'مقفول'}</button></td></tr>`).join('')}</table></div><div id="m"></div>`;
-      view.querySelectorAll('button[data-k]').forEach((b) => b.onclick = async () => { try { await (b.dataset.k === 'lesson' ? api.adminSetLessonOpen : api.adminSetHomeworkOpen)(state.token, b.dataset.id, b.dataset.v === '1'); route(); } catch (x) { $('#m').innerHTML = errBox(x); } });
+      view.querySelectorAll('button[data-k]').forEach((b) => b.onclick = async (id, ctx) => {
+      const api = ctx.api, isCurrent = ctx.isCurrent; try { await (b.dataset.k === 'lesson' ? api.adminSetLessonOpen : api.adminSetHomeworkOpen)(state.token, b.dataset.id, b.dataset.v === '1'); route(); } catch (x) { if (!isCurrent()) return; $('#m').innerHTML = errBox(x); } });
     },
   };
   let bookCur = null;
@@ -217,13 +231,32 @@ nav a.on{background:#fff;color:var(--indigo);font-weight:700}
     b.pending = e.data.P; clearTimeout(b.timer); b.timer = setTimeout(flushBook, 2500);
   });
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushBook(); });
+  let routeGeneration = 0;
   async function route() {
+    const generation = ++routeGeneration, hash = location.hash;
+    const isCurrent = () => generation === routeGeneration && hash === location.hash;
+    const stale = () => { const e = new Error('Navigation changed'); e.staleRoute = true; return e; };
+    // A response belongs only to the navigation that requested it.
+    const routeApi = new Proxy(api, { get(target, method) {
+      const call = target[method];
+      if (typeof call !== 'function') return call;
+      return async function (...args) {
+        if (!isCurrent()) throw stale();
+        try {
+          const result = await call.apply(target, args);
+          if (!isCurrent()) throw stale();
+          return result;
+        } catch (e) { if (!isCurrent()) throw stale(); throw e; }
+      };
+    }});
+    const ctx = { api: routeApi, isCurrent };
     nav();
+    view.innerHTML = '<p class="mut" role="status">جارٍ التحميل...</p>';
     const [, name = '', arg] = location.hash.split('/');
-    if (name !== 'book' && bookCur) { clearTimeout(bookCur.timer); await flushBook(); bookCur = null; }
+    if (name !== 'book' && bookCur) { clearTimeout(bookCur.timer); await flushBook(); if (!isCurrent()) return; bookCur = null; }
     const fn = routes[name];
     if (!fn) { view.innerHTML = '<div class="card">الصفحة غير موجودة.</div>'; return; }
-    await guard(() => fn(arg)); nav(); scrollTo(0, 0);
+    await guard(() => fn(arg, ctx), isCurrent); if (!isCurrent()) return; nav(); scrollTo(0, 0);
     const rp = document.getElementById('reload-player'); if (rp) rp.onclick = () => { const f = document.querySelector('.player iframe'); if (f) { const u = f.src; f.src = 'about:blank'; setTimeout(() => { f.src = u; }, 300); } };
   }
   window.addEventListener('hashchange', route); route();
