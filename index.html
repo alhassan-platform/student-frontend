@@ -1,0 +1,231 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>منصة م. الحسن شريف (نسخة تطوير)</title><style>
+:root{--ink:#14112b;--indigo:#1e1b4b;--purple:#6d3df0;--teal:#14b8a6;--aqua:#67e8f9;--bg:#f6f5fc;--card:#fff;--mut:#5d5a7a;--line:#e4e1f5}
+*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Tahoma,"Noto Sans Arabic",Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+.ban{background:#fff8e1;color:#6b5200;text-align:center;font-size:13px;padding:8px 12px;border-bottom:1px solid #f0e2a8}
+header{background:linear-gradient(135deg,var(--indigo),#3b1fa8);color:#fff;padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:12px 14px 0;border-radius:28px;box-shadow:0 8px 24px #1e1b4b33}
+.logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--teal));display:grid;place-items:center;font-weight:800;letter-spacing:1px}
+header b{font-size:17px}header small{display:block;opacity:.75;font-size:12px}
+nav{margin-inline-start:auto;display:flex;gap:6px;flex-wrap:wrap}
+nav button{background:rgba(255,255,255,.12);border:0;color:#fff;padding:10px 14px;border-radius:10px;font:inherit;font-size:14px;cursor:pointer;min-height:44px}
+nav button.on{background:#fff;color:var(--indigo);font-weight:700}
+main{max-width:1060px;margin:0 auto;padding:20px}
+.screen{display:none}.screen.on{display:block}
+.hero{background:linear-gradient(135deg,var(--indigo),var(--purple));color:#fff;border-radius:22px;padding:34px 26px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;inset-inline-end:-60px;top:-60px;width:240px;height:240px;border-radius:50%;background:radial-gradient(var(--aqua),transparent 70%);opacity:.35}
+.hero h1{margin:0 0 8px;font-size:clamp(24px,5vw,38px);line-height:1.3}.hero p{margin:0 0 18px;max-width:560px;opacity:.9}
+.btn{display:inline-block;background:var(--teal);color:#042f2b;font-weight:700;border:0;padding:12px 20px;border-radius:12px;font:inherit;font-weight:700;cursor:pointer;min-height:44px}
+.btn.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5);margin-inline-start:8px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:16px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;text-align:center}.stat b{font-size:22px;color:var(--purple);display:block}
+h2{font-size:21px;margin:26px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+.tag{display:inline-block;font-size:12px;padding:2px 10px;border-radius:99px;background:#ece8ff;color:var(--purple);font-weight:600}
+.tag.t{background:#d9f7f3;color:#0b7d70}.tag.g{background:#eee;color:#555}.tag.w{background:#fff1d6;color:#8a5a00}
+.card h3{margin:8px 0 4px;font-size:17px}.mut{color:var(--mut);font-size:14px}
+.price{font-size:22px;font-weight:800;color:var(--indigo)}
+.bar{height:10px;background:#ece9fa;border-radius:9px;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--purple),var(--teal))}
+.lesson{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.lesson:last-child{border:0}
+.dot{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#ece8ff;color:var(--purple);font-weight:700;flex:none}
+.dot.done{background:var(--teal);color:#fff}.dot.lock{background:#eee;color:#999}
+.player{aspect-ratio:16/9;background:linear-gradient(135deg,#0f0c29,#302b63);border-radius:16px;display:grid;place-items:center;color:#fff;font-size:15px}
+@media(max-width:560px){.player{aspect-ratio:4/3}}
+.play{width:64px;height:64px;border-radius:50%;background:var(--teal);display:grid;place-items:center;margin:0 auto 8px;color:#042f2b;font-size:24px}
+.two{display:grid;grid-template-columns:2fr 1fr;gap:16px}@media(max-width:760px){.two{grid-template-columns:1fr}nav{margin:0;width:100%}}
+table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:10px 8px;border-bottom:1px solid var(--line);text-align:start}th{color:var(--mut);font-weight:600}
+.tbl{overflow-x:auto}
+.step{counter-increment:s;display:flex;gap:12px;padding:10px 0}.step:before{content:counter(s);width:30px;height:30px;border-radius:50%;background:var(--indigo);color:#fff;display:grid;place-items:center;flex:none;font-weight:700}
+ol.steps{counter-reset:s;list-style:none;padding:0;margin:0}
+.sup{position:fixed;inset-inline-start:16px;bottom:16px;background:var(--teal);color:#042f2b;font-weight:700;padding:12px 18px;min-height:44px;border-radius:99px;text-decoration:none;box-shadow:0 4px 14px #0003;display:flex;gap:8px;align-items:center}.toast{position:fixed;inset-inline:16px;bottom:78px;margin:auto;max-width:420px;background:var(--indigo);color:#fff;padding:12px 16px;border-radius:12px;font-size:14px;display:none;z-index:9}.toast.on{display:block}.ft{text-align:center;color:var(--mut);font-size:12px;padding:24px}
+
+.err{background:#fde8ea;color:#8a1020;border-radius:12px;padding:12px 14px;margin:10px 0}
+.ok{background:#d9f7f3;color:#075e54;border-radius:12px;padding:12px 14px;margin:10px 0}
+input[type=text],input[type=password]{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;font:inherit;min-height:44px;direction:ltr;text-align:start}
+label{display:block;margin:10px 0 4px;font-weight:600}
+.opt{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:12px;margin:6px 0;min-height:44px;cursor:pointer}
+.opt input{width:20px;height:20px}
+a.btn{text-decoration:none}.btn[disabled]{opacity:.5;cursor:not-allowed}
+nav a{background:rgba(255,255,255,.12);color:#fff;padding:10px 14px;border-radius:10px;font-size:14px;min-height:44px;display:inline-flex;align-items:center;text-decoration:none}
+nav a.on{background:#fff;color:var(--indigo);font-weight:700}
+.sw{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+@media(max-width:520px){.stats3{grid-template-columns:1fr 1fr}.stats3 .stat:first-child{grid-column:1/-1}}
+</style></head><body><div style="padding:12px;background:#fff3cd;color:#34240a;text-align:center">نسخة اختبار منفصلة. الخادم غير منشور. لا تستخدم بيانات طلاب حقيقية.</div>
+
+<header><div class="logo">AS</div><div><b>م. الحسن شريف</b><small>برمجة وذكاء اصطناعي · LEARN · BUILD · GROW</small></div><nav id="nav"></nav></header>
+<main id="view"></main><div class="ft"></div>
+<script src="http-api.js"></script><script>try { window.PlatformApi=PlatformHttp.create(""); } catch (configError) { window.PlatformApi=new Proxy({}, {get: function(_, method){if(method==='then')return undefined;return function(){return Promise.reject(configError);};}}); }</script><script>(function () {
+  const api = window.PlatformApi;
+  const state = { token: null, user: null };
+  try { const s = JSON.parse(sessionStorage.getItem('as_sess') || 'null'); if (s) { state.token = s.token; state.user = s.user; } } catch (e) { /* storage may be blocked in the sandboxed frame */ }
+  const randHex = (n) => Array.from(crypto.getRandomValues(new Uint8Array(n)), (b) => b.toString(16).padStart(2, '0')).join('');
+  // Only a Drive file preview is ever rendered. Anything else shows a plain note.
+  const playerHtml = (u) => {
+    let src = null, m;
+    if (typeof u === 'string') {
+      if ((m = u.match(/^https:\/\/drive\.google\.com\/file\/d\/([A-Za-z0-9_-]{10,80})\/preview$/))) src = 'https://drive.google.com/file/d/' + m[1] + '/preview';
+    }
+    if (!src) return '<div class="card"><b>الفيديو مش متاح دلوقتي</b></div>';
+    return `<div class="player" style="padding:0;overflow:hidden;position:relative"><iframe src="${src}" style="width:100%;height:100%;border:0" allow="autoplay; fullscreen" allowfullscreen referrerpolicy="no-referrer"></iframe><div class="pcover" style="position:absolute;top:0;right:0;width:56px;height:56px;background:#1f2021;z-index:5;border-top-right-radius:14px"></div></div><div style="margin:8px 0"><button class="btn ghost" type="button" id="reload-player" style="color:#1e1b4b;border-color:#6d3df0">المشغّل مش ظاهر؟ حدّث</button></div>`;
+  };
+  const persist = () => { try { sessionStorage.setItem('as_sess', JSON.stringify(state.token ? { token: state.token, user: state.user } : null)); } catch (e) { /* ignore */ } };
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const D = window.PlatformDemo || {};
+  const view = $('#view');
+  const toBase64 = (file) => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1] || ''); r.onerror = () => rej(new Error('تعذّر قراءة الملف')); r.readAsDataURL(file); });
+
+  function nav() {
+    const r = location.hash.split('/')[1] || '';
+    const items = [['#/', 'الرئيسية', ''], ['#/courses', 'الدروس', 'courses']];
+    if (state.user) items.push(['#/book', 'الكتاب التفاعلي', 'book']);
+    if (state.user) items.push(['#/me', 'نتايجي', 'me']);
+    if (state.user && state.user.role === 'teacher') items.push(['#/admin', 'لوحة المعلم', 'admin']);
+    items.push(state.user ? ['#/logout', 'خروج', 'logout'] : ['#/login', 'دخول', 'login']);
+    $('#nav').innerHTML = items.map(([h, t, k]) => `<a href="${h}" class="${k === r ? 'on' : ''}">${t}</a>`).join('');
+  }
+  const errBox = (e) => `<div class="err" role="alert">${esc(e.message || 'حصل خطأ')}</div>`;
+  async function guard(fn) { try { return await fn(); } catch (e) { if (e.status === 401 && state.token) { state.token = state.user = null; persist(); } view.innerHTML = errBox(e) + `<p><a class="btn" href="#/login">تسجيل الدخول</a></p>`; return null; } }
+
+  const routes = {
+    '': async () => {
+      const c = await api.catalog();
+      view.innerHTML = `<div class="hero"><span class="tag t">تانية ثانوي · الترم الأول متاح دلوقتي</span><h1>تعلّم البرمجة والذكاء الاصطناعي<br>وابنِ مشروعك بنفسك</h1><p>اختار سنتك، ابدأ الدرس، سلّم الواجب، وشوف درجتك وتقدمك من مكان واحد.</p><a class="btn" href="#/courses">ابدأ الآن</a></div>
+      <div class="stats stats3"><div class="stat"><b>تانية ثانوي · الترم الأول</b>المتاح دلوقتي</div><div class="stat"><b>قريبًا</b>الترم التاني وأولى ثانوي</div><div class="stat"><b>حسب الدرس</b>واجب أسئلة MCQ أو رفع ملف</div></div>
+      <h2>إزاي المنصة بتشتغل؟</h2><div class="card"><ol class="steps"><li class="step"><div><b>ادخل بكودك</b><div class="mut">المعلم بيديك كود الدخول الخاص بيك، ومفيش تسجيل مفتوح.</div></div></li><li class="step"><div><b>اختار سنتك وذاكر الدرس</b><div class="mut">اتفرج على الشرح، والدروس بتتفتح لما المعلم يفتحها.</div></div></li><li class="step"><div><b>سلّم الواجب وشوف نتيجتك</b><div class="mut">الواجب حسب الدرس: أسئلة MCQ أو رفع ملف (مش كل دروس فيها واجب دلوقتي)، وتابع درجاتك من صفحة نتايجي.</div></div></li></ol></div>
+      <h2>اختار سنتك الدراسية</h2><div class="grid">${c.grades.map((g) => `<div class="card"><span class="tag">${esc(g.title)}</span><h3>برمجة وذكاء اصطناعي</h3><p class="mut">${g.terms.map((t) => esc(t.title) + ': ' + (t.available ? 'متاح' : 'قريبًا')).join(' · ')}</p><p class="mut">دروس بالفيديو، واجب، وحل نموذجي.${D.n0 || ''}</p><a class="btn" style="background:var(--purple);color:#fff" href="#/courses">شوف الدروس</a></div>`).join('')}</div>
+
+      <h2>مدرّسك</h2><div class="card"><b>م. الحسن شريف</b><p class="mut">مدرّس برمجة وذكاء اصطناعي. شرح بأمثلة من الواقع ومشاريع في كل وحدة.${D.n1 || ''}</p></div>
+      <h2>التواصل</h2><div class="card"><p class="mut" style="margin-top:0">للاستفسار أو تفعيل الاشتراك تواصل مع المعلم على واتساب.${D.n2 || ''}</p></div>`;
+    },
+    login: async () => {
+      view.innerHTML = `<div class="card" style="max-width:460px;margin:auto"><h2 style="margin-top:0">تسجيل الدخول</h2>
+      <form id="f"><label for="c">كود الدخول</label><input id="c" type="password" autocomplete="off" required><p><button class="btn" style="background:var(--purple);color:#fff">دخول</button></p></form>
+      ${D.n3 || ''}<div id="m"></div></div>`;
+      $('#f').onsubmit = async (e) => { e.preventDefault(); const lb = $('#f').querySelector('button'); lb.disabled = true; lb.textContent = 'جارٍ الدخول...'; try { const r = await api.login($('#c').value.trim(), randHex(32)); state.token = r.token; state.user = r.user; persist(); location.hash = r.user.role === 'teacher' ? '#/admin' : '#/courses'; } catch (x) { $('#m').innerHTML = errBox(x); lb.disabled = false; lb.textContent = 'دخول'; } };
+    },
+    logout: async () => { try { if (state.token) await api.logout(state.token); } catch (e) { /* token may already be invalid */ } state.token = state.user = null; persist(); location.hash = '#/'; },
+    courses: async () => {
+      if (!state.user) { view.innerHTML = `<div class="card"><h2 style="margin-top:0">سجّل دخولك الأول</h2><a class="btn" style="background:var(--purple);color:#fff" href="#/login">دخول</a></div>`; return; }
+      const cur = await api.myCurriculum(state.token);
+      view.innerHTML = `<h2 style="margin-top:0">الدروس</h2>` + cur.terms.map((t) => {
+        if (!t.available) return `<h3>${esc(t.title)}</h3><div class="card"><b>قريبًا</b><p class="mut">محتوى ${esc(t.title)} لسنتك لسه مش متاح.</p></div>`;
+        return `<h3>${esc(t.title)}</h3>` + t.units.map((u) => `<h4>${esc(u.title)}</h4><div class="card">${u.lessons.map((l) => `<a class="lesson" href="#/lesson/${l.id}" style="text-decoration:none;color:inherit"><div class="dot ${l.locked ? 'lock' : ''}">${l.locked ? '–' : '▶'}</div><div><b>${esc(l.title)}</b><div class="mut">${l.locked ? 'مقفول' : l.needsSubscription ? 'محتاج اشتراك' : l.hasVideo ? 'الشرح متاح' : 'المحتوى هيترفع قريبًا'}</div></div></a>`).join('')}</div>`).join('');
+      }).join('');
+    },
+    lesson: async (id) => {
+      if (!state.user) return routes.courses();
+      const l = await api.lesson(state.token, id);
+      let body;
+      if (l.locked) body = '<div class="card"><b>الدرس مقفول</b><p class="mut">هيتفتح لما المعلم يفتحه.</p></div>';
+      else if (l.needsSubscription) body = '<div class="card"><b>الدرس ده للمشتركين</b><p class="mut">اتواصل مع المعلم لتفعيل اشتراكك.</p></div>';
+      else if (!l.hasVideo) body = '<div class="card"><b>المحتوى هيترفع قريبًا</b></div>';
+      else body = playerHtml(l.videoUrl);
+      view.innerHTML = `<p><a href="#/courses">← كل الدروس</a></p><h2 style="margin-top:0">${esc(l.title)}</h2>${body}${l.hwOpen && !l.locked && !l.needsSubscription ? `<p><a class="btn" style="background:var(--purple);color:#fff" href="#/hw/${l.id}">ابدأ الواجب</a></p>` : '<p class="mut">الواجب مقفول حاليًا.</p>'}`;
+    },
+    hw: async (id) => {
+      if (!state.user) return routes.courses();
+      let m, st; try { st = await api.hwStatus(state.token, id); if (st.mcq !== false) m = await api.mcq(state.token, id); } catch (e) { view.innerHTML = errBox(e) + `<p><a href="#/courses">← الدروس</a></p>`; return; }
+      const okFile = (f) => /\.(pdf|png|jpe?g)$/i.test(f.name) && f.size > 0 && f.size <= 5 * 1024 * 1024;
+      const fileHint = 'PDF أو صورة PNG/JPG، حتى ٥ ميجا.';
+      // Upload-only form: used after grading (retry a failed file without grading twice).
+      const banner = (s) => (s.mcq === false ? '' : `<div class="ok">تم التسليم. درجتك ${s.score} من ${s.total}</div>`);
+      const uploadForm = (s, note) => {
+        if (s.uploads >= s.maxUploads) { $('#m').innerHTML = `${banner(s)}${note || ''}<p class="mut">وصلت للحد الأقصى من الملفات.</p>`; return; }
+        $('#m').innerHTML = `${banner(s)}${note || ''}<form id="uf" class="card" style="margin-top:10px"><b>رفع ملف الإجابة${s.uploads ? ' (ملفات مرفوعة: ' + s.uploads + ')' : ''}</b><p class="mut">${fileHint}</p><input id="up2" type="file" accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg"> <button class="btn" style="background:var(--purple);color:#fff">رفع الملف</button></form>`;
+        $('#uf').onsubmit = async (e) => {
+          e.preventDefault(); const f = $('#up2').files[0];
+          if (!f) return; if (!okFile(f)) { $('#m').insertAdjacentHTML('beforeend', errBox({ message: 'الملف لازم يكون PDF أو PNG/JPG وأقل من ٥ ميجا' })); return; }
+          const b = $('#uf').querySelector('button'); b.disabled = true; b.textContent = 'جارٍ الرفع...'; $('#m').insertAdjacentHTML('beforeend', '<p class="mut" id="busy">جارٍ رفع الملف، استنى لحظات...</p>');
+          try { await api.uploadHomework(state.token, id, f.name, await toBase64(f)); uploadForm(await api.hwStatus(state.token, id), '<div class="ok">تم رفع الملف.</div>'); }
+          catch (u) { b.disabled = false; b.textContent = 'رفع الملف'; const bz = $('#busy'); if (bz) bz.remove(); $('#m').insertAdjacentHTML('beforeend', errBox({ message: 'الملف ماترفعش: ' + (u.message || '') })); }
+        };
+      };
+      if (st.mcq === false) {
+        view.innerHTML = `<p><a href="#/lesson/${esc(id)}">← الدرس</a></p><h2 style="margin-top:0">الواجب (رفع ملف)</h2><div id="m"></div>`;
+        uploadForm(st, ''); return;
+      }
+      if (st.submitted) {
+        view.innerHTML = `<p><a href="#/lesson/${esc(id)}">← الدرس</a></p><h2 style="margin-top:0">الواجب (MCQ)</h2><div id="m"></div>`;
+        uploadForm(st, '<p class="mut">الدرجات اتسجلت قبل كده، ومش هتتسلّم تاني.</p>'); return;
+      }
+      view.innerHTML = `<p><a href="#/lesson/${esc(id)}">← الدرس</a></p><h2 style="margin-top:0">الواجب (MCQ)</h2><form id="f">${m.questions.map((q, i) => `<div class="card" style="margin-bottom:10px"><b>${i + 1}. ${esc(q.q)}</b>${q.options.map((o, j) => `<label class="opt"><input type="radio" name="q${i}" value="${j}"> ${esc(o)}</label>`).join('')}</div>`).join('')}<div class="card" style="margin-bottom:10px"><b>ملف الإجابة المقالية (اختياري)</b><p class="mut">${fileHint}</p><input id="up" type="file" accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg"></div><button class="btn" style="background:var(--purple);color:#fff">إرسال الواجب</button></form><div id="m"></div>`;
+      $('#f').onsubmit = async (e) => {
+        e.preventDefault();
+        const a = m.questions.map((_, i) => { const x = document.querySelector(`input[name=q${i}]:checked`); return x ? Number(x.value) : null; });
+        if (a.includes(null)) { $('#m').innerHTML = errBox({ message: 'جاوب على كل الأسئلة الأول' }); return; }
+        const file = $('#up').files[0];
+        // Refuse a bad file BEFORE grading, so a one-attempt homework is never graded without its file.
+        if (file && !okFile(file)) { $('#m').innerHTML = errBox({ message: 'الملف لازم يكون PDF أو PNG/JPG وأقل من ٥ ميجا. غيّر الملف وبعدين ابعت.' }); return; }
+        const btn = $('#f').querySelector('button'); btn.disabled = true; btn.textContent = 'جارٍ الإرسال...';
+        let r;
+        try { r = await api.submitMcq(state.token, id, a); } catch (x) { $('#m').innerHTML = errBox(x); btn.disabled = false; btn.textContent = 'إرسال الواجب'; return; }
+        $('#f').remove(); if (file) $('#m').innerHTML = '<div class="ok">الدرجات اتسجلت. جارٍ رفع الملف، استنى لحظات...</div>';
+        const s0 = { score: r.score, total: r.total, uploads: 0, maxUploads: 3 };
+        const review = () => !Array.isArray(r.correct) ? '' : '<h3>مراجعة الإجابات</h3>' + m.questions.map((q, i) => `<div class="card" style="margin-bottom:10px"><b>${i + 1}. ${esc(q.q)}</b>${q.options.map((o, j) => `<div class="mut" style="${j === r.correct[i] ? 'color:#0a7d6b;font-weight:700' : (j === a[i] ? 'color:#b3261e' : '')}">${j === r.correct[i] ? '✓ ' : (j === a[i] ? '✗ ' : '')}${esc(o)}</div>`).join('')}</div>`).join('');
+        if (!file) { $('#m').innerHTML = `<div class="ok">تم التسليم. درجتك ${r.score} من ${r.total}</div>` + review(); return; }
+        try { await api.uploadHomework(state.token, id, file.name, await toBase64(file)); uploadForm({ ...s0, uploads: 1 }, '<div class="ok">تم رفع الملف.</div>'); }
+        catch (u) { uploadForm(s0, errBox({ message: 'الدرجات اتسجلت، بس الملف ماترفعش: ' + (u.message || '') + '. تقدر تحاول ترفعه تاني من هنا، والدرجة مش هتتغير.' })); }
+        $('#m').insertAdjacentHTML('beforeend', review());
+      };
+    },
+    me: async () => {
+      if (!state.user) return routes.courses();
+      const [r, ls] = await Promise.all([api.myResults(state.token), api.lessons(state.token)]); const title = (id) => (ls.find((l) => l.id === id) || {}).title || id;
+      view.innerHTML = `<h2 style="margin-top:0">نتايجي</h2><div class="card">${r.length ? r.map((x) => `<div class="lesson"><div class="dot done">✓</div><div><b>${esc(title(x.lessonId))}</b><div class="mut">${x.score} من ${x.total}</div></div></div>`).join('') : '<p class="mut">لسه ما سلّمتش أي واجب.</p>'}</div>`;
+      try {
+        const bs = await api.bookStatus(state.token);
+        if (bs && bs.state === 'ok' && bs.summary) { const m = bs.summary; view.innerHTML += `<h3>الكتاب التفاعلي</h3><div class="card"><p style="margin-top:0">دروس خلصتها: <b>${m.lessonsDone}</b> من ${m.lessons} · أنشطة حلّيتها صح: <b>${m.labsDone}</b> من ${m.labs} · تجارب جرّبتها: <b>${m.labsOpened}</b> من ${m.labsOpenable} · اختبارات عملتها: <b>${m.quizzesTaken}</b> من ${m.lessons}${m.avgBestQuizPct === null ? '' : ' · متوسط أحسن نتيجة: <b>' + m.avgBestQuizPct + '%</b>'}</p><p class="mut">دي تمارين تدريب جوّه الكتاب، ومش بدل الواجب المتصحّح.</p><a class="btn" style="background:var(--purple);color:#fff" href="#/book">افتح الكتاب</a></div>`; }
+      } catch (e) { /* the book summary is optional; results above stay */ }
+    },
+    book: async () => {
+      if (!state.user) return routes.courses();
+      const st = await api.bookStatus(state.token);
+      const head = '<h2 style="margin-top:0">الكتاب التفاعلي</h2>';
+      if (st.state !== 'ok') {
+        const m = { soon: ['قريبًا', 'الكتاب بتاع سنتك لسه مش متاح.'], closed: ['الكتاب مقفول', 'هيتفتح لما المعلم يفتحه.'], subscription: ['الكتاب للمشتركين', 'اتواصل مع المعلم لتفعيل اشتراكك.'] }[st.state] || ['مش متاح', ''];
+        view.innerHTML = head + `<div class="card"><b>${m[0]}</b><p class="mut">${m[1]}</p></div>`; return;
+      }
+      view.innerHTML = head + '<div id="bk-note" class="mut" style="margin-bottom:8px">جارٍ تحميل الكتاب...</div><div id="bk-box"></div><p id="bk-save" class="mut" style="margin:8px 0 0"></p>';
+      const r = await api.bookGet(state.token);
+      const f = document.createElement('iframe');
+      f.title = 'الكتاب التفاعلي'; f.setAttribute('sandbox', 'allow-scripts');
+      f.style.cssText = 'width:100%;height:calc(100vh - 190px);min-height:560px;border:1px solid var(--line);border-radius:18px;background:#fff';
+      f.srcdoc = r.html.split('"@@INIT@@"').join(JSON.stringify(r.progress).replace(/</g, '\\u003c'));
+      $('#bk-box').appendChild(f); $('#bk-note').textContent = 'تقدمك وأنشطتك بتتسجّل في حسابك تلقائيًا.';
+      bookCur = { frame: f, pending: null, sig: null, timer: null };
+    },
+    admin: async () => {
+      // No client-side role gate: the API itself rejects non-teachers.
+      if (!state.token) return routes.courses();
+      const o = await api.adminOverview(state.token); const ls = await api.lessons(state.token);
+      view.innerHTML = `<h2 style="margin-top:0">لوحة المعلم</h2><div class="stats"><div class="stat"><b>${o.students}</b>طلاب</div><div class="stat"><b>${o.submissions}</b>تسليمات</div><div class="stat"><b>${o.closedLessons}</b>دروس مقفولة</div><div class="stat"><b>${o.missingVideos.length}</b>دروس بلا فيديو</div></div>
+      <div class="card tbl"><table><tr><th>الدرس</th><th>الدرس مفتوح</th><th>الواجب مفتوح</th></tr>${ls.map((l) => `<tr><td>${esc(l.title)}</td><td><button class="btn" data-k="lesson" data-id="${l.id}" data-v="${l.open ? 0 : 1}" style="background:${l.open ? 'var(--teal)' : '#ddd'}">${l.open ? 'مفتوح' : 'مقفول'}</button></td><td><button class="btn" data-k="hw" data-id="${l.id}" data-v="${l.hwOpen ? 0 : 1}" style="background:${l.hwOpen ? 'var(--teal)' : '#ddd'}">${l.hwOpen ? 'مفتوح' : 'مقفول'}</button></td></tr>`).join('')}</table></div><div id="m"></div>`;
+      view.querySelectorAll('button[data-k]').forEach((b) => b.onclick = async () => { try { await (b.dataset.k === 'lesson' ? api.adminSetLessonOpen : api.adminSetHomeworkOpen)(state.token, b.dataset.id, b.dataset.v === '1'); route(); } catch (x) { $('#m').innerHTML = errBox(x); } });
+    },
+  };
+  let bookCur = null;
+  async function flushBook() {
+    const b = bookCur; if (!b || !b.pending || !state.token) return;
+    const p = b.pending, sig = JSON.stringify(p); if (sig === b.sig) { b.pending = null; return; }
+    b.pending = null; const note = document.getElementById('bk-save');
+    try { await api.bookSync(state.token, p); b.sig = sig; if (note) note.textContent = 'اتحفظ تقدمك.'; }
+    catch (e) { if (!b.pending) b.pending = p; if (note) note.textContent = 'تعذّر حفظ التقدم، هنحاول تاني.'; clearTimeout(b.timer); b.timer = setTimeout(flushBook, 8000); }
+  }
+  window.addEventListener('message', (e) => {
+    const b = bookCur; if (!b || e.source !== b.frame.contentWindow || !e.data || e.data.itbook !== 1 || e.data.t !== 'save' || typeof e.data.P !== 'object') return;
+    b.pending = e.data.P; clearTimeout(b.timer); b.timer = setTimeout(flushBook, 2500);
+  });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushBook(); });
+  async function route() {
+    nav();
+    const [, name = '', arg] = location.hash.split('/');
+    if (name !== 'book' && bookCur) { clearTimeout(bookCur.timer); await flushBook(); bookCur = null; }
+    const fn = routes[name];
+    if (!fn) { view.innerHTML = '<div class="card">الصفحة غير موجودة.</div>'; return; }
+    await guard(() => fn(arg)); nav(); scrollTo(0, 0);
+    const rp = document.getElementById('reload-player'); if (rp) rp.onclick = () => { const f = document.querySelector('.player iframe'); if (f) { const u = f.src; f.src = 'about:blank'; setTimeout(() => { f.src = u; }, 300); } };
+  }
+  window.addEventListener('hashchange', route); route();
+})();
+</script></body></html>
