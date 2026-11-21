@@ -50,11 +50,11 @@ nav a{background:rgba(255,255,255,.12);color:#fff;padding:10px 14px;border-radiu
 nav a.on{background:#fff;color:var(--indigo);font-weight:700}
 .sw{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 @media(max-width:520px){.stats3{grid-template-columns:1fr 1fr}.stats3 .stat:first-child{grid-column:1/-1}}
-</style></head><body><div style="padding:12px;background:#fff3cd;color:#34240a;text-align:center">نسخة اختبار منفصلة. الخادم غير منشور. لا تستخدم بيانات طلاب حقيقية.</div>
+</style></head><body><div style="padding:12px;background:#fff3cd;color:#34240a;text-align:center">نسخة اختبار مؤقتة ببيانات وهمية فقط. ينتهي الربط تلقائيًا ٢٢ نوفمبر ٢٠٢٦ الساعة ٠٠:٥٧ بتوقيت القاهرة. لا تستخدم بيانات طلاب حقيقية.</div>
 
 <header><div class="logo">AS</div><div><b>م. الحسن شريف</b><small>برمجة وذكاء اصطناعي · LEARN · BUILD · GROW</small></div><nav id="nav"></nav></header>
 <main id="view"></main><div class="ft"></div>
-<script src="http-api.js"></script><script>try { window.PlatformApi=PlatformHttp.create(""); } catch (configError) { window.PlatformApi=new Proxy({}, {get: function(_, method){if(method==='then')return undefined;return function(){return Promise.reject(configError);};}}); }</script><script>(function () {
+<script src="http-api.js"></script><script>try { window.PlatformApi=PlatformHttp.create("https://script.google.com/macros/s/AKfycbwTPC9By-PVBF3P8daYUxcNzy1BEidYJ72uPZ3Rh1n0m7T-rLo6CiwbhAY7YwZ1RigC/exec"); } catch (configError) { window.PlatformApi=new Proxy({}, {get: function(_, method){if(method==='then')return undefined;return function(){return Promise.reject(configError);};}}); }</script><script>(function () {
   const api = window.PlatformApi;
   const state = { token: null, user: null };
   try { const s = JSON.parse(sessionStorage.getItem('as_sess') || 'null'); if (s) { state.token = s.token; state.user = s.user; } } catch (e) { /* storage may be blocked in the sandboxed frame */ }
