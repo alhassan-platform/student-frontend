@@ -2,7 +2,7 @@
   'use strict';
   // No endpoint is built in. Configuration never contains a password, code or token.
   function createHttpApi(endpoint, dependencies) {
-    if (!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(endpoint || '')) throw new Error('خادم التجربة غير مضبوط');
+    if (!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(endpoint || '')) throw new Error('خادم المنصة غير مضبوط');
     var dep = dependencies || {}, request = dep.fetch || root.fetch.bind(root);
     var readOnly = new Set(['me','catalog','myCurriculum','lessons','lesson','mcq','myResults','hwStatus','bookStatus','bookGet']);
     var allowed = new Set([...readOnly, 'login','logout','submitMcq','uploadHomework','bookSync']);
@@ -17,7 +17,7 @@
             var response = await request(endpoint, { method: 'POST', mode: 'cors', credentials: 'omit', redirect: 'follow', referrerPolicy: 'no-referrer', headers: { 'Content-Type': 'text/plain;charset=UTF-8' }, body: JSON.stringify({ protocol: 'student-http-v1', method: method, args: args }), signal: controller.signal });
             if (!response.ok) { var he = new Error('تعذّر الاتصال بالخادم'); he.status = response.status; throw he; }
             var contentType = response.headers.get('content-type') || '';
-            if (!contentType.includes('application/json')) throw new Error('خادم التجربة لم يرجع بيانات صالحة. لا تستخدم صفحة تسجيل Google كخادم للطلاب.');
+            if (!contentType.includes('application/json')) throw new Error('خادم المنصة لم يرجع بيانات صالحة. لا تستخدم صفحة تسجيل Google كخادم للطلاب.');
             var result = await response.json();
             if (!result || typeof result.ok !== 'boolean') throw new Error('استجابة غير صالحة');
             if (!result.ok) { var e = new Error(result.message || 'حصل خطأ'); e.status = result.status; throw e; }
