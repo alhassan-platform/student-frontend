@@ -1,5 +1,6 @@
 <!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>منصة م. الحسن شريف (نسخة تطوير)</title><style>
+<title>منصة م. الحسن شريف</title><style>
+.fullscreen-exit{display:none;position:absolute;top:8px;left:8px;z-index:6;border:1px solid #ffffff99;border-radius:10px;background:#161324e8;color:#fff;padding:10px 14px;min-height:44px;font:inherit;cursor:pointer}.player:fullscreen .fullscreen-exit{display:block}
 :root{--ink:#14112b;--indigo:#1e1b4b;--purple:#6d3df0;--teal:#14b8a6;--aqua:#67e8f9;--bg:#f6f5fc;--card:#fff;--mut:#5d5a7a;--line:#e4e1f5}
 *{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Tahoma,"Noto Sans Arabic",Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
 .ban{background:#fff8e1;color:#6b5200;text-align:center;font-size:13px;padding:8px 12px;border-bottom:1px solid #f0e2a8}
@@ -29,6 +30,7 @@ h2{font-size:21px;margin:26px 0 10px}
 .lesson{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.lesson:last-child{border:0}
 .dot{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#ece8ff;color:var(--purple);font-weight:700;flex:none}
 .dot.done{background:var(--teal);color:#fff}.dot.lock{background:#eee;color:#999}
+.player:fullscreen{width:100vw;height:100dvh;aspect-ratio:auto;border-radius:0;background:#1f2021}.player:fullscreen .pcover{border-radius:0}
 .player{aspect-ratio:16/9;background:linear-gradient(135deg,#0f0c29,#302b63);border-radius:16px;display:grid;place-items:center;color:#fff;font-size:15px}
 @media(max-width:560px){.player{aspect-ratio:4/3}}
 .play{width:64px;height:64px;border-radius:50%;background:var(--teal);display:grid;place-items:center;margin:0 auto 8px;color:#042f2b;font-size:24px}
@@ -50,11 +52,11 @@ nav a{background:rgba(255,255,255,.12);color:#fff;padding:10px 14px;border-radiu
 nav a.on{background:#fff;color:var(--indigo);font-weight:700}
 .sw{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 @media(max-width:520px){.stats3{grid-template-columns:1fr 1fr}.stats3 .stat:first-child{grid-column:1/-1}}
-</style></head><body><div style="padding:12px;background:#fff3cd;color:#34240a;text-align:center">نسخة اختبار منفصلة. الربط بالخادم متوقف. لا تستخدم بيانات طلاب حقيقية.</div>
+#legacy-name{direction:rtl;text-align:right}</style></head><body>
 
 <header><div class="logo">AS</div><div><b>م. الحسن شريف</b><small>برمجة وذكاء اصطناعي · LEARN · BUILD · GROW</small></div><nav id="nav"></nav></header>
 <main id="view"></main><div class="ft"></div>
-<script src="http-api.js"></script><script>try { window.PlatformApi=PlatformHttp.create(""); } catch (configError) { window.PlatformApi=new Proxy({}, {get: function(_, method){if(method==='then')return undefined;return function(){return Promise.reject(configError);};}}); }</script><script>(function () {
+<script src="http-api.js"></script><script>try { window.PlatformApi=PlatformHttp.create("https://script.google.com/macros/s/AKfycbzL9iEz1wfXynSKT4OyHvcc0EPUp9yUotDip__Vw2X5bCDl3GYlqws9fMquur9CXXz0/exec"); } catch (configError) { window.PlatformApi=new Proxy({}, {get: function(_, method){if(method==='then')return undefined;return function(){return Promise.reject(configError);};}}); }</script><script>(function () {
   const api = window.PlatformApi;
   const state = { token: null, user: null };
   try { const s = JSON.parse(sessionStorage.getItem('as_sess') || 'null'); if (s) { state.token = s.token; state.user = s.user; } } catch (e) { /* storage may be blocked in the sandboxed frame */ }
@@ -66,7 +68,7 @@ nav a.on{background:#fff;color:var(--indigo);font-weight:700}
       if ((m = u.match(/^https:\/\/drive\.google\.com\/file\/d\/([A-Za-z0-9_-]{10,80})\/preview$/))) src = 'https://drive.google.com/file/d/' + m[1] + '/preview';
     }
     if (!src) return '<div class="card"><b>الفيديو مش متاح دلوقتي</b></div>';
-    return `<div class="player" style="padding:0;overflow:hidden;position:relative"><iframe src="${src}" style="width:100%;height:100%;border:0" allow="autoplay; fullscreen" allowfullscreen referrerpolicy="no-referrer"></iframe><div class="pcover" style="position:absolute;top:0;right:0;width:56px;height:56px;background:#1f2021;z-index:5;border-top-right-radius:14px"></div></div><div style="margin:8px 0"><button class="btn ghost" type="button" id="reload-player" style="color:#1e1b4b;border-color:#6d3df0">المشغّل مش ظاهر؟ حدّث</button></div>`;
+    return `<div class="player" style="padding:0;overflow:hidden;position:relative"><button class="fullscreen-exit" id="exit-fullscreen-player" type="button">خروج من ملء الشاشة</button><iframe src="${src}" style="width:100%;height:100%;border:0" allow="autoplay" title="فيديو الدرس" referrerpolicy="no-referrer"></iframe><div class="pcover" style="position:absolute;top:0;right:0;width:56px;height:56px;background:#1f2021;z-index:5;border-top-right-radius:14px"></div></div><div style="margin:8px 0"><button class="btn ghost" type="button" id="reload-player" style="color:#1e1b4b;border-color:#6d3df0">المشغّل مش ظاهر؟ حدّث</button> <button class="btn ghost" type="button" id="fullscreen-player" style="color:#1e1b4b;border-color:#6d3df0">ملء الشاشة</button><p id="video-note" class="mut" role="status"></p></div>`;
   };
   const persist = () => { try { sessionStorage.setItem('as_sess', JSON.stringify(state.token ? { token: state.token, user: state.user } : null)); } catch (e) { /* ignore */ } };
   const $ = (s) => document.querySelector(s);
@@ -102,9 +104,9 @@ nav a.on{background:#fff;color:var(--indigo);font-weight:700}
     login: async (id, ctx) => {
       const api = ctx.api, isCurrent = ctx.isCurrent;
       view.innerHTML = `<div class="card" style="max-width:460px;margin:auto"><h2 style="margin-top:0">تسجيل الدخول</h2>
-      <form id="f"><label for="c">كود الدخول</label><input id="c" type="password" autocomplete="off" required><p><button class="btn" style="background:var(--purple);color:#fff">دخول</button></p></form>
+      <form id="f"><label for="legacy-name">الاسم المسجل (للأكواد القديمة)</label><input id="legacy-name" type="text" autocomplete="name" maxlength="80"><label for="c">كود الدخول</label><input id="c" type="password" autocomplete="off" required><p><button class="btn" style="background:var(--purple);color:#fff">دخول</button></p></form>
       ${D.n3 || ''}<div id="m"></div></div>`;
-      $('#f').onsubmit = async (e) => { e.preventDefault(); const lb = $('#f').querySelector('button'); lb.disabled = true; lb.textContent = 'جارٍ الدخول...'; try { const r = await api.login($('#c').value.trim(), randHex(32)); state.token = r.token; state.user = r.user; persist(); location.hash = r.user.role === 'teacher' ? '#/admin' : '#/courses'; } catch (x) { if (!isCurrent()) return; $('#m').innerHTML = errBox(x); lb.disabled = false; lb.textContent = 'دخول'; } };
+      $('#f').onsubmit = async (e) => { e.preventDefault(); const lb = $('#f').querySelector('button'); lb.disabled = true; lb.textContent = 'جارٍ الدخول...'; try { const r = await api.login($('#c').value.trim(), randHex(32), $('#legacy-name').value.trim()); state.token = r.token; state.user = r.user; persist(); location.hash = r.user.role === 'teacher' ? '#/admin' : '#/courses'; } catch (x) { if (!isCurrent()) return; $('#m').innerHTML = errBox(x); lb.disabled = false; lb.textContent = 'دخول'; } };
     },
     logout: async (id, ctx) => {
       const api = ctx.api, isCurrent = ctx.isCurrent, token = state.token;
@@ -257,6 +259,20 @@ nav a.on{background:#fff;color:var(--indigo);font-weight:700}
     const fn = routes[name];
     if (!fn) { view.innerHTML = '<div class="card">الصفحة غير موجودة.</div>'; return; }
     await guard(() => fn(arg, ctx), isCurrent); if (!isCurrent()) return; nav(); scrollTo(0, 0);
+    const fullscreen = document.getElementById('fullscreen-player');
+    if (fullscreen) fullscreen.onclick = async () => {
+      const player = document.querySelector('.player'), note = document.getElementById('video-note');
+      try {
+        if (!player || !player.requestFullscreen) throw new Error('ملء الشاشة غير مدعوم في المتصفح ده');
+        await player.requestFullscreen();
+        if (note && isCurrent()) note.textContent = '';
+      } catch (e) { if (note && isCurrent()) note.textContent = 'تعذّر فتح ملء الشاشة في المتصفح ده. تقدر تكمّل المشاهدة هنا.'; }
+    };
+    const exitFullscreen = document.getElementById('exit-fullscreen-player');
+    if (exitFullscreen) exitFullscreen.onclick = async () => {
+      try { if (document.fullscreenElement) await document.exitFullscreen(); }
+      catch (e) { const note = document.getElementById('video-note'); if (note) note.textContent = 'استخدم زر الرجوع في المتصفح للخروج من ملء الشاشة.'; }
+    };
     const rp = document.getElementById('reload-player'); if (rp) rp.onclick = () => { const f = document.querySelector('.player iframe'); if (f) { const u = f.src; f.src = 'about:blank'; setTimeout(() => { f.src = u; }, 300); } };
   }
   window.addEventListener('hashchange', route); route();
